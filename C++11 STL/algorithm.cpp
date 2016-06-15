@@ -3,8 +3,15 @@
 #include <algorithm>
 #include <iterator>
 #include <list>
+#include <numeric>
 
 using namespace std;
+
+struct PLAYER
+{
+	int CharCD;
+	bool IsRedTeam;
+};
 
 struct ITEM
 {
@@ -148,6 +155,99 @@ int main()
 		}
 	}
 	cout << endl << endl;
+
+	cout << "- 플레이어 팀 조사 -" << endl;
+	{
+		vector< PLAYER > StagePlayers1;
+		PLAYER player1; player1.CharCD = 1; player1.IsRedTeam = true;
+		StagePlayers1.push_back(player1);
+		PLAYER player2; player2.CharCD = 2; player2.IsRedTeam = true;
+		StagePlayers1.push_back(player2);
+		PLAYER player3; player3.CharCD = 3; player3.IsRedTeam = true;
+		StagePlayers1.push_back(player3);
+		PLAYER player4; player4.CharCD = 4; player4.IsRedTeam = false;
+		StagePlayers1.push_back(player4);
+		PLAYER player5; player5.CharCD = 5; player5.IsRedTeam = false;
+		StagePlayers1.push_back(player5);
+		PLAYER player6; player6.CharCD = 6; player6.IsRedTeam = false;
+		StagePlayers1.push_back(player6);
+		PLAYER player7; player7.CharCD = 7; player7.IsRedTeam = false;
+		StagePlayers1.push_back(player7);
+		
+		bool IsPartitioned = is_partitioned(StagePlayers1.begin(), StagePlayers1.end(),
+			[](PLAYER player) -> bool { return player.IsRedTeam; });
+		if (IsPartitioned)
+		{
+			cout << "레드 팀과 블루 팀으로 나누어져 있습니다." << endl;
+		}
+		else
+		{
+			cout << "레드 팀과 블루 팀으로 나누어져 있지 않습니다." << endl;
+		}
+
+		vector<PLAYER>::iterator IterFirstBlueTeamPlayer = partition_point(StagePlayers1.begin(), StagePlayers1.end(),
+			[](PLAYER player)->bool {return player.IsRedTeam; });
+		cout << "첫 번쨰 블루 팀 플레이어. 캐릭터 코드 : " << (*IterFirstBlueTeamPlayer).CharCD << endl;
+	}
+	cout << endl << endl;
+
+	cout << "- 정렬 여부 조사 -" << endl;
+	{
+		int Numbers1[5] = { 1, 2, 3, 4, 5 };
+		int Numbers2[5] = { 5, 4, 3, 2, 1 };
+		int Numbers3[5] = { 1, 2, 4, 3, 5 };
+		bool IsResult = false;
+
+		IsResult = is_sorted(&Numbers1[0], &Numbers1[5], [](int x, int y)
+		{
+			return x < y;
+		});
+		cout << "Numbers1. 오름차순? " << IsResult << endl;
+		IsResult = is_sorted(&Numbers2[0], &Numbers2[5], [](int x, int y)
+		{
+			return x > y;
+		});
+		cout << "Numbers2. 내림차순? " << IsResult << endl;
+		IsResult = is_sorted(&Numbers3[0], &Numbers3[5], [](int x, int y)
+		{
+			return x < y;
+		});
+		cout << "Numbers3. 오름차순? " << IsResult << endl;
+		int Numbers4[8] = { 1,2,3,5,4,5,7,8 };
+		int* NumIter = is_sorted_until(&Numbers4[0], &Numbers4[5], [](int x, int y)
+		{
+			return x < y;
+		});
+		cout << "Numbers4에서 정렬되지 않은 첫 번째 위치의 값 : " << *NumIter << endl;
+	}
+	cout << endl << endl;
+
+	cout << "- 요소를 연속적인 값으로 채우기 -" << endl;
+	{
+		vector<int> Numberlist;
+		Numberlist.push_back(2);
+		Numberlist.push_back(5);
+		Numberlist.push_back(7);
+		iota(Numberlist.begin(), Numberlist.end(), 2);
+
+		for (auto iter : Numberlist)
+		{
+			cout << iter << endl;
+		}
+	}
+	cout << "- 최대값, 최소값 구하기 -" << endl;
+	{
+		cout << "std::min" << endl;
+		cout << min({ 10, 15, 1, 5, 2 }) << endl;
+		cout << endl;
+		cout << "std::max" << endl;
+		cout << max({ 10, 15, 1, 5, 2 }) << endl;
+		cout << endl;
+		auto value = minmax({ 10, 15, 1, 5, 2 });
+		cout << "std::minmax" << endl;
+		cout << "최소값, 최고값 : " << value.first << ", " <<value.second << endl;
+		cout << endl;
+	}
 
 	return 0;
 }
